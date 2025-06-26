@@ -1,0 +1,32 @@
+import pygame
+# ---- Экран ----
+WIDTH = 800
+HEIGHT = 600
+FPS = 60
+GAME_TITLE = "Шутер"
+
+# ---- Цвета ----
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+
+# ---- Параметры кругов ----
+CIRCLE_RADIUS_MIN = 10
+CIRCLE_RADIUS_MAX = 30
+CIRCLE_SPEED_MIN = 1
+CIRCLE_SPEED_MAX = 5
+MAX_CIRCLES = 10
+CIRCLE_SPAWN_INTERVAL = 2000
+
+# ---- Прицел ----
+CROSSHAIR_COLOR = WHITE
+CROSSHAIR_LINE_LENGTH = 15
+CROSSHAIR_GAP = 10
+
+# ---- Шрифт ----
+FONT_NAME = 'Arial'
+FONT_SIZE = 40
+SCORE_TEXT_COLOR = WHITE
