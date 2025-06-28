@@ -8,6 +8,7 @@ from  Pygame.FrogPlatformer.Objeckt.kiwi import Kiwi
 from Pygame.FrogPlatformer.Objeckt.enemy import Enemy
 import pytmx
 from Pygame.FrogPlatformer.Levels.levels import *
+from Pygame.FrogPlatformer.Objeckt.Boss import *
 
 pygame.init()
 pygame.font.init()
@@ -24,7 +25,7 @@ enemy_group = pygame.sprite.Group()
 camera = Camera(2000)
 
 font = pygame.font.SysFont('Arial', 30)
-
+stone_group = pygame.sprite.Group()
 tmx_data = pytmx.load_pygame('Assest/Levels/BasicLevel.tmx')
 background_layer = tmx_data.get_layer_by_name("Background")
 background_surface = pygame.Surface((tmx_data.width * tmx_data.tilewidth, tmx_data.height * tmx_data.tileheight))
@@ -62,8 +63,12 @@ def load_level(level_data):
 
     return player
 
+
+
 current_levels = 0
 player = load_level(levels[current_levels])
+
+boss = Boss(0, 0, 25, 7, platform_group, stone_group, player)
 
 running = True
 playing = True
@@ -92,6 +97,7 @@ while running:
 
     if playing:
         all_sprites.update()
+        stone_group.update()
 
         if camera.check(player, WIDTH, HEIGHT):
             for sprite in all_sprites:
