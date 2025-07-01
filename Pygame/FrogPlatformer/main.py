@@ -94,6 +94,9 @@ while running:
                 if is_near(player, boss, 100):
                     player.damage_enemy(boss)
 
+                if is_near(player, flying_enemy, 100):
+                    player.damage_enemy(flying_enemy)
+
     if player.health == 0:
         playing = False
 
@@ -138,6 +141,7 @@ while running:
         screen.blit(background_surface, (0, 0))
         all_sprites.draw(screen)
         stone_group.draw(screen)
+        flying_enemies.draw(screen)
 
         score_text = font.render(f'Киви: {kiwi_score}', True, BLACK)
         screen.blit(score_text, (20, 20))
