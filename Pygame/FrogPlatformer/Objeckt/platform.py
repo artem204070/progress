@@ -3,7 +3,7 @@ from Pygame.FrogPlatformer.Module.SpriteSheet import SpriteSheet
 
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y, platform_w, platform_h,  image_x, image_y, image_w, image_h):
+    def __init__(self, x, y, platform_w, platform_h, image_x, image_y, image_w, image_h):
         pygame.sprite.Sprite.__init__(self)
         terrain_sheet = SpriteSheet(pygame.image.load("Assest/Terrain/terrain.png"))
         single_image = terrain_sheet.getImage(image_x, image_y, image_w, image_h)

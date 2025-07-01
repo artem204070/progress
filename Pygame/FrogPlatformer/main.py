@@ -2,13 +2,14 @@ import pygame
 from consts import *
 from Pygame.FrogPlatformer.Objeckt.platform import Platform
 from Pygame.FrogPlatformer.Objeckt.player import Player
-from  Pygame.FrogPlatformer.Module.Camera import Camera
-from  Pygame.FrogPlatformer.Objeckt.background import Background
-from  Pygame.FrogPlatformer.Objeckt.kiwi import Kiwi
+from Pygame.FrogPlatformer.Module.Camera import Camera
+from Pygame.FrogPlatformer.Objeckt.background import Background
+from Pygame.FrogPlatformer.Objeckt.kiwi import Kiwi
 from Pygame.FrogPlatformer.Objeckt.enemy import Enemy
 import pytmx
 from Pygame.FrogPlatformer.Levels.levels import *
 from Pygame.FrogPlatformer.Objeckt.Boss import *
+from Pygame.FrogPlatformer.Objeckt.FlyingEnemy import *
 
 pygame.init()
 pygame.font.init()
@@ -21,11 +22,12 @@ all_sprites = pygame.sprite.Group()
 platform_group = pygame.sprite.Group()
 kiwi_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
+stone_group = pygame.sprite.Group()
+flying_enemies = pygame.sprite.Group()
 
 camera = Camera(2000)
 
 font = pygame.font.SysFont('Arial', 30)
-stone_group = pygame.sprite.Group()
 tmx_data = pytmx.load_pygame('Assest/Levels/BasicLevel.tmx')
 background_layer = tmx_data.get_layer_by_name("Background")
 background_surface = pygame.Surface((tmx_data.width * tmx_data.tilewidth, tmx_data.height * tmx_data.tileheight))
@@ -42,6 +44,7 @@ def load_level(level_data):
     platform_group.empty()
     kiwi_group.empty()
     enemy_group.empty()
+    stone_group.empty()
 
     for args in level_data["platforms"]:
         platform = Platform(*args)
@@ -56,19 +59,25 @@ def load_level(level_data):
         enemy_group.add(enemy)
         all_sprites.add(enemy)
 
-
-
     player = Player(*level_data["player_start"], platform_group)
     all_sprites.add(player)
 
     return player
 
-
+def is_near(sprite1, sprite2, distance):
+    dx = sprite1.rect.centerx - sprite2.rect.centerx
+    dy = sprite1.rect.centery - sprite2.rect.centery
+    return (dx**2 + dy**2) ** 0.5 < distance
 
 current_levels = 0
 player = load_level(levels[current_levels])
 
-boss = Boss(0, 0, 25, 7, platform_group, stone_group, player)
+boss = Boss(0, 0, 25, 7, platform_group, stone_group, player, True)
+all_sprites.add(boss)
+
+flying_enemy = FlyingEnemy(500, 300, 15, 30, platform_group, stone_group, player)
+flying_enemies.add(flying_enemy)
+all_sprites.add(flying_enemy)
 
 running = True
 playing = True
@@ -80,8 +89,10 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 for enemy in enemy_group:
-                    if pygame.sprite.collide_rect(player, enemy):
+                    if is_near(player, enemy, 100):
                         player.damage_enemy(enemy)
+                if is_near(player, boss, 100):
+                    player.damage_enemy(boss)
 
     if player.health == 0:
         playing = False
@@ -93,7 +104,6 @@ while running:
             kiwi_score = 0
         else:
             running = False
-
 
     if playing:
         all_sprites.update()
@@ -112,9 +122,22 @@ while running:
             if pygame.sprite.collide_rect(player, enemy):
                 enemy.damage_player(player)
 
+        for flying_enemy in flying_enemies:
+            if pygame.sprite.collide_rect(player, flying_enemy):
+                flying_enemy.damage_player(player)
+
+        for stone in stone_group:
+            if pygame.sprite.collide_rect(player, stone):
+                player.health -= stone.damage
+                stone.kill()
+
+        if pygame.sprite.collide_rect(player, boss) and not boss.is_death:
+            boss.damage_player(player)
+
         screen.fill(WHITE)
         screen.blit(background_surface, (0, 0))
         all_sprites.draw(screen)
+        stone_group.draw(screen)
 
         score_text = font.render(f'Киви: {kiwi_score}', True, BLACK)
         screen.blit(score_text, (20, 20))
@@ -126,7 +149,6 @@ while running:
         screen.fill(BLACK)
         death_text = font.render(f'Вы умерли но собрали: {kiwi_score} киви!', True, RED)
         screen.blit(death_text, (250, 300))
-
 
     pygame.display.update()
     clock.tick(FPS)

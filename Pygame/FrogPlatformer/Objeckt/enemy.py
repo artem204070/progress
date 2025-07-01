@@ -25,6 +25,11 @@ class Enemy(pygame.sprite.Sprite):
             self.run_frames = [self.run_sheet.getImage(32 * x, 0, 32, 32) for x in range(6)]
             self.death_sheet = SpriteSheet(pygame.image.load("Assest/Enemy/Dude_Monster_Death_8.png"))
             self.death_frames = [self.death_sheet.getImage(32 * x, 0, 32, 32) for x in range(8)]
+        elif type == 4:
+            self.run_sheet = SpriteSheet(pygame.image.load("Assest/Enemy/Run.png"))
+            self.run_frames = [self.run_sheet.getImage(32 * x, 0, 32, 32) for x in range(7)]
+            self.death_sheet = SpriteSheet(pygame.image.load("Assest/Enemy/Dead.png"))
+            self.death_frames = [self.death_sheet.getImage(32 * x, 0, 32, 32) for x in range(5)]
 
         self.health = health
 
