@@ -19,27 +19,7 @@ class FlyingEnemy(Enemy):
 
 
     def update(self):
-        self.vel_y -= 1
-
-        if self.rect.y < self.original_y - self.fly_height:
-            self.fly_direction = 1
-        elif self.rect.y > self.original_y + self.fly_height:
-            self.fly_direction = -1
-
-        self.rect.x += self.speed * self.direction
-
-        if time.time() - self.move_time_start > self.move_duration:
-            self.direction *= -1
-            self.move_time_start = time.time()
-
-        look_ahead = self.rect.x + self.speed * self.direction * 2
-        look_rect = pygame.Rect(look_ahead, self.rect.y, self.width, self.height)
-
-        for platform in self.platform_group:
-            if look_rect.colliderect(platform.rect):
-                self.direction *= -1
-                self.move_time_start = time.time()
-                break
+        super().update()
 
         if time.time() - self.last_shot_time > self.shoot_cooldown:
             self.shoot_stone(self.player.rect.centerx, self.player.rect.centery)

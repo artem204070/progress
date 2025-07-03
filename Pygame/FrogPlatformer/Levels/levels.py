@@ -1,3 +1,4 @@
+
 levels = [
     {
         'player_start': (100, 50),
@@ -26,9 +27,13 @@ levels = [
             (500, 100, 10, 1, 2),
             (300, 200, 10, 2, 2),
             (1000, 100, 10, 1, 2),
-        ]
+        ],
+        'fly_enemy': [],
+        'boss': [],
+        'background': (
+            "Assest/Terrain/Battleground1.png"
+        )
     },
-
     {
         'player_start': (100, 50),
         'platforms': [
@@ -60,9 +65,16 @@ levels = [
             (900, 300, 10, 1, 1),
             (1200, 400, 12, 2, 2),
             (1400, 250, 15, 3, 1)
-        ]
+        ],
+        'fly_enemy': [
+            (700, 200, 10, 2),
+            (1100, 150, 15, 1)
+        ],
+        'boss': [],
+        'background': (
+            "Assest/Terrain/Battleground2.png"
+        )
     },
-
     {
         'player_start': (100, 50),
         'platforms': [
@@ -100,6 +112,14 @@ levels = [
             (1250, 400, 12, 2, 1),
             (1600, 250, 18, 4, 2)
         ],
-        'exit': (1750, 150, 64, 64)
+        'fly_enemy': [
+            (850, 100, 15, 2)
+        ],
+        'boss': [
+            (1500, 100, 25, 10)
+        ],
+        'background': (
+            "Assest/Terrain/Battleground3.png"
+        )
     }
 ]

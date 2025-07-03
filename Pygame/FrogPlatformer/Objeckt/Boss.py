@@ -3,7 +3,7 @@ from Pygame.FrogPlatformer.Objeckt.Stone import *
 from Pygame.FrogPlatformer.Objeckt.enemy import *
 
 class Boss(Enemy):
-    def __init__(self, x, y, damage, health, platform_group, stone_group, player, check):
+    def __init__(self, x, y, damage, health, platform_group, stone_group, player):
         super().__init__(x, y, damage, health, 3, platform_group)
         self.stone_group = stone_group
         self.player = player
