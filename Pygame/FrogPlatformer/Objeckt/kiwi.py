@@ -21,6 +21,8 @@ class Kiwi(pygame.sprite.Sprite):
         self.topoffset = 18
         self.xoffset = 19
 
+        self.sound = pygame.mixer.Sound("sound/kiwi.mp3")
+
         self.idle_length = 17
         kiwi_idle = SpriteSheet(pygame.image.load('Assest/Collectables/kiwi.png'))
         self.idle = [kiwi_idle.getImage(32 * x, 0, 32, 32) for x in range(self.idle_length)]
@@ -58,6 +60,7 @@ class Kiwi(pygame.sprite.Sprite):
             )
         else:
             # Анимация смерти
+            self.sound.play()
             if self.death_state <= self.death_length:
                 if self.d_current_delay == self.d_delay:
                     self.death_state += 1

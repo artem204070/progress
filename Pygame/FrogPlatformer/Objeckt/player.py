@@ -35,6 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.max_jumps = 2
         self.jump_count = 0
 
+        self.jump_sound = pygame.mixer.Sound("sound/jump.mp3")
+        self.jump_sound.set_volume(0.4)
+
         self.image = pygame.transform.scale(self.idle_frames[0], (self.width, self.height))
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -139,6 +142,7 @@ class Player(pygame.sprite.Sprite):
 
 
         if keys[pygame.K_SPACE]:
+            self.jump_sound.play()
             if not self.space_pressed and self.jump_count < self.max_jumps:
                 self.vel_y = self.jumping_power
                 self.jumping = True
@@ -159,21 +163,22 @@ class Player(pygame.sprite.Sprite):
         self.update_animation()
 
     def damage_enemy(self, enemy, no_target):
-        enemy.health -= 1
-        enemy.invincible_enemy = True
-        enemy.invincible_time_enemy = time.time()
+        if not enemy.invincible_enemy and not enemy.is_death:
+            enemy.health -= 1
+            enemy.invincible_enemy = True
+            enemy.invincible_time_enemy = time.time()
 
-        if enemy.health == 0:
-            enemy.is_death = True
+            if enemy.health == 0:
+                enemy.is_death = True
 
-        if enemy.rect.centerx < self.rect.centerx:
-            enemy.vel_x = -100
-        else:
-            enemy.vel_x = 100
-        if no_target == True:
-            enemy.vel_y = -10
-        else:
-            pass
+            if enemy.rect.centerx < self.rect.centerx:
+                enemy.vel_x = -100
+            else:
+                enemy.vel_x = 100
+            if no_target == True:
+                enemy.vel_y = -10
+            else:
+                pass
 
-        enemy.death_frame = 0
-        enemy.death_animation_counter = 0
+            enemy.death_frame = 0
+            enemy.death_animation_counter = 0

@@ -44,19 +44,29 @@ tmx_data = pytmx.load_pygame('Assest/Levels/BasicLevel.tmx')
 kiwi_score = 0
 max_kiwi_score = 0
 
+sound_damage = pygame.mixer.Sound("sound/damage.mp3")
+sound_damage.set_volume(0.2)
+
 def save_max_score(filename='progress.txt'):
     # try:
     #     with open("score.txt", "w") as file:
     #         file.write(str(max_score))
     # except FileNotFoundError:
     #     print('создаем фаил')
-    data = {
-        "current_level": current_levels,
-        "player_x": player.world_x,
-        "player_y": player.rect.y,
-        "player_health": player.health,
-        "kiwi_score": kiwi_score,
-    }
+    if player.health <= 0:
+        data = {
+            "current_level": current_levels,
+            "player_health": 100,
+            "kiwi_score": 0,
+        }
+    else:
+        data = {
+            "current_level": current_levels,
+            # "player_x": player.world_x,
+            # "player_y": player.rect.y,
+            "player_health": player.health,
+            "kiwi_score": kiwi_score,
+        }
     with open(filename, "w") as file:
         json.dump(data, file)
 
@@ -142,9 +152,11 @@ while running:
             if event.key == pygame.K_e:
                 for enemy in enemy_group:
                     if is_near(player, enemy, 100):
+                        sound_damage.play()
                         player.damage_enemy(enemy, True)
                 for fly_enemy in flying_enemies:
                     if is_near(player, fly_enemy, 100):
+                        sound_damage.play()
                         player.damage_enemy(fly_enemy, False)
 
     if player.health == 0:

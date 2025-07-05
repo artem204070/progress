@@ -53,6 +53,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+        self.sound = pygame.mixer.Sound("sound/take_damage.mp3")
+
         self.speed = 3
         self.damage = damage
         self.move_time_start = time.time()
@@ -77,6 +79,14 @@ class Enemy(pygame.sprite.Sprite):
             current_image = pygame.transform.flip(current_image, True, False)
 
         self.image = pygame.transform.scale(current_image, (self.width, self.height))
+
+        if self.invincible_enemy:
+            if int(time.time() * 10) % 2 == 0:
+                self.image.set_alpha(128)
+            else:
+                self.image.set_alpha(255)
+        else:
+            self.image.set_alpha(255)
 
     def update(self):
         self.vel_y += self.graviti
@@ -132,6 +142,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def damage_player(self, player):
         if not player.invincible:
+            self.sound.play()
             player.health -= self.damage
             player.invincible = True
             player.invincible_timer = time.time()
