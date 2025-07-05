@@ -154,13 +154,31 @@ class Player(pygame.sprite.Sprite):
 
         if self.world_x > 2000 - self.rect.width:
             self.world_x = 2000 - self.rect.width
-            self.rect.x = WIDTH - self.rect.width
+            self.rect.x = 2000 - self.rect.width
 
         self.update_animation()
 
-    def damage_enemy(self, enemy):
+    def damage_enemy(self, enemy, no_target):
         enemy.health -= 1
         if enemy.health == 0:
             enemy.is_death = True
+
+        if enemy.rect.centerx < self.rect.centerx:
+            enemy.vel_x = -100
+        else:
+            enemy.vel_x = 100
+        if no_target == True:
+            enemy.vel_y = -10
+        else:
+            enemy.vel_y = -0
+
         enemy.death_frame = 0
         enemy.death_animation_counter = 0
+
+    # def fix_damage(self, enemy2):
+    #     enemy2.health -= 1
+    #     if enemy2.health == 0:
+    #         enemy2.is_death = True
+    #
+    #     enemy2.death_frame = 0
+    #     enemy2.death_animation_counter = 0

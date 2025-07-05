@@ -9,6 +9,7 @@ class Boss(Enemy):
         self.player = player
         self.shoot_cooldown = 3.0
         self.last_shot_time = time.time()
+        self.name = "Boss"
 
 
     def update(self):

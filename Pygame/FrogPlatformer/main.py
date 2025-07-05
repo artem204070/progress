@@ -10,7 +10,7 @@ import pytmx
 from Pygame.FrogPlatformer.Levels.levels import *
 from Pygame.FrogPlatformer.Objeckt.Boss import *
 from Pygame.FrogPlatformer.Objeckt.FlyingEnemy import *
-
+import json
 pygame.init()
 pygame.font.init()
 
@@ -44,21 +44,42 @@ tmx_data = pytmx.load_pygame('Assest/Levels/BasicLevel.tmx')
 kiwi_score = 0
 max_kiwi_score = 0
 
-def save_max_score(max_score):
-    try:
-        with open("score.txt", "w") as file:
-            file.write(str(max_score))
-    except FileNotFoundError:
-        print('создаем фаил')
+def save_max_score(filename='progress.txt'):
+    # try:
+    #     with open("score.txt", "w") as file:
+    #         file.write(str(max_score))
+    # except FileNotFoundError:
+    #     print('создаем фаил')
+    data = {
+        "current_level": current_levels,
+        "player_x": player.world_x,
+        "player_y": player.rect.y,
+        "player_health": player.health,
+        "kiwi_score": kiwi_score,
+    }
+    with open(filename, "w") as file:
+        json.dump(data, file)
 
-def load_max_score():
-    global max_kiwi_score
+def load_max_score(filename='progress.txt'):
+    global current_levels, kiwi_score, player
     try:
-        with open("score.txt", "r") as file:
-            score = file.read()
-            max_kiwi_score = int(score)
+        with open(filename, "r") as file:
+            data = json.load(file)
+        current_levels = data["current_level"]
+        player = load_level(levels[current_levels])
+        # player.world_x = data["player_x"]
+        # player.rect.y = data["player_y"]
+        player.health = data["player_health"]
+        kiwi_score = data["kiwi_score"]
     except Exception as e:
         print(e)
+    # try:
+    #     with open("score.txt", "r") as file:
+    #         score = file.read()
+    #         max_kiwi_score = int(score)
+    # except Exception as e:
+    #     print(e)
+
 
 def load_level(level_data):
     global current_background
@@ -109,21 +130,22 @@ player = load_level(levels[current_levels])
 
 running = True
 playing = True
+boss_encountered = False
 
 load_max_score()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            save_max_score(kiwi_score)
+            save_max_score()
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 for enemy in enemy_group:
                     if is_near(player, enemy, 100):
-                        player.damage_enemy(enemy)
+                        player.damage_enemy(enemy, True)
                 for fly_enemy in flying_enemies:
                     if is_near(player, fly_enemy, 100):
-                        player.damage_enemy(fly_enemy)
+                        player.damage_enemy(fly_enemy, False)
 
     if player.health == 0:
         playing = False
@@ -134,7 +156,7 @@ while running:
             player = load_level(levels[current_levels])
             kiwi_score = 0
         else:
-            save_max_score(kiwi_score)
+            save_max_score()
             running = False
 
     if playing:
@@ -156,8 +178,17 @@ while running:
 
         for stone in stone_group:
             if pygame.sprite.collide_rect(player, stone):
-                player.health -= stone.damage
-                stone.kill()
+                if not player.invincible:
+                    player.health -= stone.damage
+                    stone.kill()
+                    player.invincible = True
+
+        for enemy in enemy_group:
+            if isinstance(enemy, Boss) and is_near(player, enemy, 400):
+                boss_encountered = True
+                current_boss = enemy
+                break
+
 
         offset_x, offset_y = camera.get_offset(player, WIDTH)
 
@@ -175,6 +206,13 @@ while running:
 
         health_text = font.render(f'Здоровье: {player.health}', True, BLACK)
         screen.blit(health_text, (20, 80))
+
+        if boss_encountered:
+            boss_name_text = font.render(f"{current_boss.name}", True, RED)
+            screen.blit(boss_name_text, (0, 300))
+
+            boss_health_text = font.render(f"Здоровье {current_boss.health}", True, RED)
+            screen.blit(boss_health_text, (80, 300))
 
     else:
         screen.fill(BLACK)
