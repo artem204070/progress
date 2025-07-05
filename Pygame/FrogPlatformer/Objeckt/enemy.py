@@ -6,6 +6,10 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, damage, health, type, platform_group):
         pygame.sprite.Sprite.__init__(self)
 
+        self.invincible_enemy = False
+        self.invincible_time_enemy = 0
+        self.invincible_duration_enemy = 1.5
+
         self.width = 60
         self.height = 60
         if type == 1:
@@ -119,6 +123,10 @@ class Enemy(pygame.sprite.Sprite):
             if self.death_frame < len(self.death_frames):
                 self.image = pygame.transform.scale(self.death_frames[self.death_frame], (self.width, self.height))
             return
+
+        if self.invincible_enemy:
+            if time.time() - self.invincible_time_enemy > self.invincible_duration_enemy:
+                self.invincible_enemy = False
 
         self.update_animation()
 

@@ -160,6 +160,9 @@ class Player(pygame.sprite.Sprite):
 
     def damage_enemy(self, enemy, no_target):
         enemy.health -= 1
+        enemy.invincible_enemy = True
+        enemy.invincible_time_enemy = time.time()
+
         if enemy.health == 0:
             enemy.is_death = True
 
@@ -170,15 +173,7 @@ class Player(pygame.sprite.Sprite):
         if no_target == True:
             enemy.vel_y = -10
         else:
-            enemy.vel_y = -0
+            pass
 
         enemy.death_frame = 0
         enemy.death_animation_counter = 0
-
-    # def fix_damage(self, enemy2):
-    #     enemy2.health -= 1
-    #     if enemy2.health == 0:
-    #         enemy2.is_death = True
-    #
-    #     enemy2.death_frame = 0
-    #     enemy2.death_animation_counter = 0
