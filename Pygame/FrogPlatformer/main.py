@@ -40,6 +40,9 @@ tmx_data = pytmx.load_pygame('Assest/Levels/BasicLevel.tmx')
 #     title = tmx_data.get_tile_image_by_gid(gid)
 #     if title:
 #         background_surface.blit(title, (x * tmx_data.tilewidth, y * tmx_data.tileheight))
+play_image = pygame.image.load("Assest/UI/play.png")
+play_image = pygame.transform.scale(play_image, (100, 100))
+play_rect = play_image.get_rect(center=(WIDTH // 2, 475))
 
 kiwi_score = 0
 max_kiwi_score = 0
@@ -130,6 +133,12 @@ def load_level(level_data):
 
     return player
 
+def restart_game():
+    global playing
+    playing = True
+    save_max_score()
+    load_max_score()
+
 def is_near(sprite1, sprite2, distance):
     dx = sprite1.rect.centerx - sprite2.rect.centerx
     dy = sprite1.rect.centery - sprite2.rect.centery
@@ -139,7 +148,7 @@ current_levels = 0
 player = load_level(levels[current_levels])
 
 running = True
-playing = True
+playing = False
 boss_encountered = False
 
 load_max_score()
@@ -158,6 +167,9 @@ while running:
                     if is_near(player, fly_enemy, 100):
                         sound_damage.play()
                         player.damage_enemy(fly_enemy, False)
+        if playing == False and event.type == pygame.MOUSEBUTTONDOWN:
+            if play_rect.collidepoint(event.pos):
+                restart_game()
 
     if player.health == 0:
         playing = False
@@ -233,6 +245,8 @@ while running:
 
         max_score_text = font.render(f'Ваш рекорд: {max_kiwi_score} киви!', True, BLUE)
         screen.blit(max_score_text, (250, 350))
+
+        screen.blit(play_image, play_rect)
 
     pygame.display.update()
     clock.tick(FPS)
