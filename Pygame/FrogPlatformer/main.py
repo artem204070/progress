@@ -26,8 +26,8 @@ stone_group = pygame.sprite.Group()
 flying_enemies = pygame.sprite.Group()
 
 
-backgrounds = []  # Список для хранения фонов каждого уровня
-current_background = None  # Текущий отображаемый фон
+backgrounds = []
+current_background = None
 
 camera = Camera(2000)
 
