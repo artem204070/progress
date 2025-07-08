@@ -1,6 +1,6 @@
 import pygame
 from consts import *
-from Pygame.FrogPlatformer.Objeckt.platform import Platform
+from Pygame.FrogPlatformer.Objeckt.platform import *
 from Pygame.FrogPlatformer.Objeckt.player import Player
 from Pygame.FrogPlatformer.Module.Camera import Camera
 from Pygame.FrogPlatformer.Objeckt.background import Background
@@ -127,11 +127,16 @@ def load_level(level_data):
         boss = Boss(*args, platform_group, stone_group, player)
         all_sprites.add(boss)
         enemy_group.add(boss)
+    for args in level_data["Move_platform"]:
+        move_platform = MovePlatform(*args)
+        all_sprites.add(move_platform)
+        platform_group.add(move_platform)
 
 
     all_sprites.add(player)
 
     return player
+
 
 def restart_game():
     global playing
@@ -150,6 +155,7 @@ player = load_level(levels[current_levels])
 running = True
 playing = False
 boss_encountered = False
+main = True
 
 load_max_score()
 while running:
@@ -173,6 +179,7 @@ while running:
 
     if player.health == 0:
         playing = False
+        main = False
 
     if all(kiwi.collected for kiwi in kiwi_group):
         current_levels += 1
@@ -238,13 +245,19 @@ while running:
             boss_health_text = font.render(f"Здоровье {current_boss.health}", True, RED)
             screen.blit(boss_health_text, (80, 300))
 
-    else:
+    elif not playing and not main:
         screen.fill(BLACK)
         death_text = font.render(f'Вы умерли но собрали: {kiwi_score} киви!', True, RED)
         screen.blit(death_text, (250, 300))
 
         max_score_text = font.render(f'Ваш рекорд: {max_kiwi_score} киви!', True, BLUE)
         screen.blit(max_score_text, (250, 350))
+
+        screen.blit(play_image, play_rect)
+
+    elif not playing and main:
+        hello_text = font.render(f'Привет', True, BLUE)
+        screen.blit(hello_text, (250, 350))
 
         screen.blit(play_image, play_rect)
 

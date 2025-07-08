@@ -47,7 +47,7 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_delay = 5
         self.animation_counter = 0
         self.direction = 1
-
+        self.world_x = x
         self.image = pygame.transform.scale(self.run_frames[0], (self.width, self.height))
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -137,6 +137,14 @@ class Enemy(pygame.sprite.Sprite):
         if self.invincible_enemy:
             if time.time() - self.invincible_time_enemy > self.invincible_duration_enemy:
                 self.invincible_enemy = False
+
+        if self.world_x < 0:
+            self.world_x = 0
+            self.rect.x = 0
+
+        if self.world_x > 2000 - self.rect.width:
+            self.world_x = 2000 - self.rect.width
+            self.rect.x = 2000 - self.rect.width
 
         self.update_animation()
 
